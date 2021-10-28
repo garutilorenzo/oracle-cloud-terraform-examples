@@ -13,9 +13,9 @@ Deploy Oracle Cloud services using Oracle [always free](https://docs.oracle.com/
 
 There are three examples:
 
-* Deploy a [simple compute instance](tree/master/simple-instance)
-* Deploy two instances behind a network load balancer using an [instance pool](tree/master/instance-pool)
-* Deploy a [k3s-cluster](tree/master/k3s-cluster)
+* Deploy a [simple compute instance](simple-instance/)
+* Deploy two instances behind a network load balancer using an [instance pool](instance-pool/)
+* Deploy a [k3s-cluster](k3s-cluster/)
 
 ### Requirements
 
