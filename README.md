@@ -9,6 +9,19 @@ Deploy Oracle Cloud services using Oracle [always free](https://docs.oracle.com/
 
 **Note** choose a region with enough ARM capacity
 
+### Table of Contents
+
+* [Repository structure](#repository-structure)
+* [Requirements](#requirements)
+  * [Setup RSA Key](#example-rsa-key-generation)
+* [Oracle provider setup](#oracle-provider-setup)
+* [Variables](#other-variables-to-adjust)
+* [Common resources](#common-resources)
+* [Firewall](#firewall)
+* [OS](#os)
+* [Shape](#shape)
+* [Useful documentation](#useful-documentation)
+
 ### Repository structure
 
 There are three examples:

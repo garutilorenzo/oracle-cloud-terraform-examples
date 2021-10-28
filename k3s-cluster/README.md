@@ -27,6 +27,8 @@ In this example an extra variable is used:
 * install_longhorn, boolean value, if true (default) will install [longhorn](https://longhorn.io/) block storage 
 * longhorn_release, longorn release version
 
+**Remember** to set the provider [settings](https://github.com/garutilorenzo/oracle-cloud-terraform-examples#oracle-provider-setup) and ajust all the [variables](https://github.com/garutilorenzo/oracle-cloud-terraform-examples#other-variables-to-adjust)
+
 ### Deploy
 
 To deploy the infrastructure:

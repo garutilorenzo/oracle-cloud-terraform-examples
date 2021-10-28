@@ -20,6 +20,8 @@ In this example an extra variable is used:
 * fault_domains. This variable is a list of fault domains where our instance pool will deploy our instances
 * instance_pool_size. Number of instances to launch in the instance pool
 
+**Remember** to set the provider [settings](https://github.com/garutilorenzo/oracle-cloud-terraform-examples#oracle-provider-setup) and ajust all the [variables](https://github.com/garutilorenzo/oracle-cloud-terraform-examples#other-variables-to-adjust)
+
 ### Deploy
 
 To deploy the infrastructure:

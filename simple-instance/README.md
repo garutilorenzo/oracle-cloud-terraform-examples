@@ -8,6 +8,8 @@ In this example an extra variable is used:
 
 * fault_domain, this variable indicate in which fault domain our instance will be launched
 
+**Remember** to set the provider [settings](https://github.com/garutilorenzo/oracle-cloud-terraform-examples#oracle-provider-setup) and ajust all the [variables](https://github.com/garutilorenzo/oracle-cloud-terraform-examples#other-variables-to-adjust)
+
 ### Deploy
 
 To deploy the infrastructure:
