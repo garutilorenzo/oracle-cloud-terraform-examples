@@ -9,6 +9,12 @@ Deploy Oracle Cloud services using Oracle [always free](https://docs.oracle.com/
 
 **Note** choose a region with enough ARM capacity
 
+### Important notes
+
+* This is repo shows only how to use terraform with the Oracle Cloud infrastructure and use only the **always free** resources. This examples are **not** for a production environment.
+* At the end of your trial period (30 days). All the paid resources deployed will be stopped/terminated
+* At the end of your trial period (30 days), if you have a running compute instance it will be stopped/hibernated
+
 ### Table of Contents
 
 * [Repository structure](#repository-structure)
