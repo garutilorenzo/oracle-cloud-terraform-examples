@@ -1,4 +1,4 @@
-# Simple compute instance
+# VCN with private and public subnet
 
 This example will deploy a one VCN with one public subnet ad one private subnet. Also this modules deploy a security list with the following rueles:
 

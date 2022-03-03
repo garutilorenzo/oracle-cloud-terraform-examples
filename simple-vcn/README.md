@@ -1,4 +1,4 @@
-# Simple compute instance
+# VCN with two public subnets
 
 This module will deploy a one VCN with two public subnets. Also this modules deploy a security list with the following rueles:
 
