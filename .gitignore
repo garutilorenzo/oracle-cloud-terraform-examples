@@ -1,4 +1,5 @@
 vars-ori.tf_
+main.tf-ori
 
 # Local .terraform directories
 **/.terraform/*
