@@ -2,28 +2,12 @@ variable "compartment_ocid" {
 
 }
 
-variable "tenancy_ocid" {
-
-}
-
 variable "region" {
-  default = "<your_region>"
-}
-
-variable "user_ocid" {
-
-}
-
-variable "fingerprint" {
-
-}
-
-variable "private_key_path" {
 
 }
 
 variable "availability_domain" {
-  default = "<availability_domain>"
+
 }
 
 variable "fault_domains" {
@@ -32,37 +16,37 @@ variable "fault_domains" {
 }
 
 variable "PATH_TO_PUBLIC_KEY" {
-  default = "~/.ssh/id_rsa.pub"
+  type        = string
+  default     = "~/.ssh/id_rsa.pub"
+  description = "Path to your public key"
+}
+
+variable "environment" {
+  type = string
+}
+
+variable "is_private" {
+  type    = bool
+  default = false
+}
+
+variable "public_subnet_id" {
+  type = string
+}
+
+variable "private_subnet_id" {
+  type = string
+}
+
+variable "public_subnet_cidr" {
+  type = string
 }
 
 variable "os_image_id" {
-  default = "ocid1.image.oc1.eu-zurich-1.aaaaaaaam4u4w4dprotagbxx4glcmjtndbkunzs5kvz5qpkqybemlv4wds3a" # Ubuntu 20.04
-}
-
-variable "oci_core_vcn_cidr" {
-  default = "10.0.0.0/16"
-}
-
-variable "oci_core_subnet_cidr10" {
-  default = "10.0.0.0/24"
-}
-
-variable "oci_core_subnet_cidr11" {
-  default = "10.0.1.0/24"
+  default = "ocid1.image.oc1.eu-zurich-1.aaaaaaaag2uyozo7266bmg26j5ixvi42jhaujso2pddpsigtib6vfnqy5f6q" # Canonical-Ubuntu-20.04-aarch64-2022.01.18-0
 }
 
 variable "instance_pool_size" {
+  type    = number
   default = 2
-}
-
-variable "tutorial_tag_key" {
-  default = "oracle-tutorial"
-}
-
-variable "tutorial_tag_value" {
-  default = "terraform"
-}
-
-variable "my_public_ip_address" {
-  default = "<public_ip>"
 }

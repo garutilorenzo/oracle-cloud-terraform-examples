@@ -1,115 +1,34 @@
-# Instance pool with network load balancer
+# Instance pool
 
-This example will deploy:
+This module will deploy an Instance pool made by two compute instances. Also this module will create one instance configuration used by the instance pool.
 
-* one instance configuration used by the instance pool
-* one instance pool
-* two Oracle compute instances launched by the instance pool
-* one network load balancer, that will route the traffic from the internet to our instance pool instances
+If you choose to publish this compute instances in a private subnet, you need a NAT instance (refer to nat-instance module). The nat instance can be used also as bation host to reach the private instance, or if you prefer you can deploy a dedicated bastion host (refer to bastion-host module).
 
-The network load balancer is made by:
+### Requirements
 
-* one listener (port 80)
-* one backed set
-* one backed for each of the instances in the instance pool
+* One vcn with a public or private subnet (simple-vcn or private-vcn module)
+* One nat instance if the instance pool *is_private* (nat-instance module)
 
-### Extra variables
+### Module variables
 
-In this example an extra variable is used:
+| Var   | Required | Desc |
+| ------- | ------- | ----------- |
+| `region`       | `yes`       | set the correct OCI region based on your needs  |
+| `availability_domain` | `yes`        | Set the correct availability domain. See [how](../README.md#how-to-find-the-availability-doamin-name) to find the availability domain|
+| `compartment_ocid` | `yes`        | Set the correct compartment ocid. See [how](../README.md#oracle-provider-setup) to find the compartment ocid |
+| `environment`  | `yes`  | Current work environment (Example: staging/dev/prod). This value is used for tag all the deployed resources |
+| `private_subnet_id`  | `yes`  | Private subnet OCID |
+| `public_subnet_id`  | `yes`  | Public subnet OCID |
+| `public_subnet_cidr`  | `yes`  | Public subnet CIDR |
+| `instance_pool_size`  | `no`  | Number of instances in the instance pool. Default: 2 |
+| `fault_domains`  | `no`  | Fault list. Default: FAULT-DOMAIN-1, FAULT-DOMAIN-2, FAULT-DOMAIN-3 |
+| `PATH_TO_PUBLIC_KEY` | `no`        | Path to your public ssh key (Default: "~/.ssh/id_rsa.pub) |
+| `is_private`  | `no`  | Bool value. If true the instance pool will be deployed in a private subnet. Default: false |
+| `os_image_id`  | `no`  | OS image OCID. Default: ocid1.image.oc1.eu-zurich-1.aaaaaaaag2uyozo7266bmg26j5ixvi42jhaujso2pddpsigtib6vfnqy5f6q - Canonical-Ubuntu-20.04-aarch64-2022.01.18-0 |
 
-* fault_domains. This variable is a list of fault domains where our instance pool will deploy our instances
-* instance_pool_size. Number of instances to launch in the instance pool
+### Output
 
-**Remember** to set the provider [settings](https://github.com/garutilorenzo/oracle-cloud-terraform-examples#oracle-provider-setup) and ajust all the [variables](https://github.com/garutilorenzo/oracle-cloud-terraform-examples#other-variables-to-adjust)
+The module will output:
 
-### Deploy
-
-To deploy the infrastructure:
-
-```
-terraform init
-
-terraform plan
-
-terraform apply
-```
-
-wait terraform to complete the operation, when terraform successfully finished the deployment you will see in the output the public ip addresses of the instances and the public ip address of the network load balancer:
-
-```
-Apply complete! Resources: 14 added, 0 changed, 0 destroyed.
-
-Outputs:
-
-instances_ips = [
-  "152.x.x.x",
-  "152.x.x.x",
-]
-lb_ip = tolist([
-  {
-    "ip_address" = "152.x.x.x"
-    "is_public" = true
-    "reserved_ip" = tolist([])
-  },
-])
-```
-
-now you can ssh into the machine:
-
-```
-ssh ubuntu@152.x.x.x
-
-...
-35 updates can be applied immediately.
-25 of these updates are standard security updates.
-To see these additional updates run: apt list --upgradable
-
-
-
-The programs included with the Ubuntu system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
-applicable law.
-
-To run a command as administrator (user "root"), use "sudo <command>".
-See "man sudo_root" for details.
-
-ubuntu@inst-ikudx-ubuntu-instance-pool:~$
-```
-
-Test the connection to the load balancer:
-
-```
-curl -v 152.x.x.x
-*   Trying 152.x.x.x:80...
-* TCP_NODELAY set
-* Connected to 152.x.x.x (152.x.x.x) port 80 (#0)
-> GET / HTTP/1.1
-> Host: 152.x.x.x
-> User-Agent: curl/7.68.0
-> Accept: */*
-> 
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 200 OK
-< Server: nginx/1.18.0 (Ubuntu)
-< Date: Wed, 27 Oct 2021 15:39:51 GMT
-< Content-Type: text/html
-< Content-Length: 672
-< Last-Modified: Wed, 27 Oct 2021 15:33:26 GMT
-< Connection: keep-alive
-< ETag: "61797146-2a0"
-< Accept-Ranges: bytes
-...
-...
-...
-```
-
-**NOTE** You have to wait all the backends to be in HEALTH state before reaching successfully the load balancer.
-
-### Cleanup
-
-```
-terraform destroy
-```
+* instances_ips, IPs of the instances
+* instance_pool_id, Instance pool OCID

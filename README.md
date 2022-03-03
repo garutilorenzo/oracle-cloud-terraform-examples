@@ -21,8 +21,7 @@ Deploy Oracle Cloud services using Oracle [always free](https://docs.oracle.com/
 * [Requirements](#requirements)
   * [Setup RSA Key](#example-rsa-key-generation)
 * [Oracle provider setup](#oracle-provider-setup)
-* [Variables](#other-variables-to-adjust)
-* [Common resources](#common-resources)
+* [Project setup](#project-setup)
 * [Firewall](#firewall)
 * [OS](#os)
 * [Shape](#shape)
@@ -30,11 +29,17 @@ Deploy Oracle Cloud services using Oracle [always free](https://docs.oracle.com/
 
 ### Repository structure
 
-There are three examples:
+In this repositroy there are 7 terrafrom modules, in order of dependency:
 
-* Deploy a [simple compute instance](simple-instance/)
-* Deploy two instances behind a network load balancer using an [instance pool](instance-pool/)
-* Deploy a [k3s-cluster](k3s-cluster/)
+* [simple-vcn](simple-vcn/) - Setup a VCN with two PUBLIC subnets
+* [private-vcn](private-vcn/) - Setup a VCN with one PUBLIC subnet and one PRIVATE subnet
+* [nat-instance](nat-instance/) - Setup a NAT instance (with the Oracle always free account you can't deploy a NAT gateway)
+* [simple-instance](simple-instance/) - Deploy a simple instance in a private or public subnet
+* [instance-pool](instance-pool/) - Deploy multiple instances using a Oracle instance pool and instance configurations
+* [load-balancer](load-balancer/) - Deploy a public load balancer (Layer 7 HTTP)
+* [network-load-balancer](network-load-balancer/) - Deploy a private load balancer (Layer 4 TCP)
+
+For more information on how to use this modules follow the examples in the *examples* directory. To use this repository, clone this repository and use the *example* directory as base dir.
 
 ### Requirements
 
@@ -43,6 +48,12 @@ To use this repo you will need:
 * an Oracle Cloud account. You can register [here](https://cloud.oracle.com)
 
 Once you get the account, follow the *Before you begin* and *1. Prepare* step in [this](https://docs.oracle.com/en-us/iaas/developer-tutorials/tutorials/tf-provider/01-summary.htm) document.
+
+You need also:
+
+* [Terraform](https://www.terraform.io/) - Terraform is an open-source infrastructure as code software tool that provides a consistent CLI workflow to manage hundreds of cloud services. Terraform codifies cloud APIs into declarative configuration files.
+* [kubectl](https://kubernetes.io/docs/tasks/tools/) - The Kubernetes command-line tool (optional)
+* [oci cli](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/cliconcepts.htm) - Oracle command line interface (optional)
 
 #### Example RSA key generation
 
@@ -58,9 +69,15 @@ replace *<your_name>* with your name or a string you prefer.
 
 **NOTE** ~/.oci/<your_name>-oracle-cloud_public.pem this string will be used on the *terraform.tfvars* used by the Oracle provider plugin, so please take note of this string.
 
+### Project setup
+
+Once you have cloned this repo, change directory to [examples](examples/) dir and choose the example you prefer: *private subnet* or main.tf or *public subnet* main.tf-public file. Edit the example file and set the needed variables (*change-me* variables). Crate a *terraform.tfvars* file, for more detail see [Oracle provider setup](#oracle-provider-setup) and read all the modules requirements in each module directory.
+
+Or if you prefer you can create a new empty directory in your workspace and start a new project from scratch. To setup the project follow the README.md in the [examples](examples/) directory.
+
 ### Oracle provider setup
 
-In any subdirectory of this repo you need to create a terraform.tfvars file, the file will look like:
+This is an example of the *terraform.tfvars* file:
 
 ```
 fingerprint      = "<rsa_key_fingerprint>"
@@ -78,48 +95,71 @@ The compartment_ocid is the same as tenency_ocid.
 
 The fingerprint is the fingerprint of your RSA key, you can find this vale under User setting > API Keys
 
-### Other variables to adjust
+#### How to find the availability doamin name
 
-Before triggering the infrastructure deployment adjust the following variables (vars.tf in each subdirectory):
+To find the list of the availability domains run this command on che Cloud Shell:
 
-* region, set the correct region based on your needs
-* availability_domain, set you availability domain, you can get the availability domain string in the "*Create instance* form. Once you are in the create instance procedure under the placement section click "Edit" and copy the string that begin with *iAdc:*. Example iAdc:EU-ZURICH-1-AD-1
-* default_fault_domain, set de default fault domain, choose one of: FAULT-DOMAIN-1, FAULT-DOMAIN-2, FAULT-DOMAIN-3
-* PATH_TO_PUBLIC_KEY, this variable have to point at your ssh public key
-* oci_core_vcn_cidr, set the default VCN subnet cidr 
-* oci_core_subnet_cidr10, set the default subnet cidr
-* oci_core_subnet_cidr11, set the secondary subnet cidr
-* tutorial_tag_key, set a key used to tag all the deployed resources
-* tutorial_tag_value, set the value of the tutorial_tag_key
-* my_public_ip_address, set your public ip address
+```
+oci iam availability-domain list
+{
+  "data": [
+    {
+      "compartment-id": "<compartment_ocid>",
+      "id": "ocid1.availabilitydomain.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "name": "iAdc:EU-ZURICH-1-AD-1"
+    }
+  ]
+}
+```
 
-### Common resources
+#### How to list all the OS images
 
-All the environments share the same network and security list configurations.
+To filter the OS images by shape and OS run this command on che Cloud Shell:
 
-The network setup create:
+```
+oci compute image list --compartment-id <compartment_ocid> --operating-system "Canonical Ubuntu" --shape "VM.Standard.A1.Flex"
+{
+  "data": [
+    {
+      "agent-features": null,
+      "base-image-id": null,
+      "billable-size-in-gbs": 2,
+      "compartment-id": null,
+      "create-image-allowed": true,
+      "defined-tags": {},
+      "display-name": "Canonical-Ubuntu-20.04-aarch64-2022.01.18-0",
+      "freeform-tags": {},
+      "id": "ocid1.image.oc1.eu-zurich-1.aaaaaaaag2uyozo7266bmg26j5ixvi42jhaujso2pddpsigtib6vfnqy5f6q",
+      "launch-mode": "NATIVE",
+      "launch-options": {
+        "boot-volume-type": "PARAVIRTUALIZED",
+        "firmware": "UEFI_64",
+        "is-consistent-volume-naming-enabled": true,
+        "is-pv-encryption-in-transit-enabled": true,
+        "network-type": "PARAVIRTUALIZED",
+        "remote-data-volume-type": "PARAVIRTUALIZED"
+      },
+      "lifecycle-state": "AVAILABLE",
+      "listing-type": null,
+      "operating-system": "Canonical Ubuntu",
+      "operating-system-version": "20.04",
+      "size-in-mbs": 47694,
+      "time-created": "2022-01-27T22:53:34.270000+00:00"
+    },
+```
 
-* One VCN (10.0.0.0/16 subnet), you can setup a custom network CIDR in oci_core_vcn_cidr variable.
-* Two subnets, the first subnet (default) is the 10.0.0.0/24 range, the second subnet is 10.0.1.0/24 range. You can customize the subnets CIDR in oci_core_subnet_cidr10 and oci_core_subnet_cidr11 variables.
-
-The security list rules are:
-
-* By default only the incoming ICMP, SSH and HTTP traffic is allowed from your public ip. You can setup your public ip in my_public_ip_address variable.
-* By default all the outgoing traffic is allowed
-* A second security list rule (Custom security list) open all the incoming http traffic
-* Both default security list and the custom security list are associated on both subnets
-* Network flow from the private VCN subnet is allowed
+**Note:** this setup was only tested with Ubuntu 20.04
 
 ### Firewall
 
-By default firewall on the compute instances is disabled. On some test the firewall has created some problems
+By default firewall on the compute instances is disabled (except for the nat instance).
 
 ### Software installed
 
 In the simple-instance example and in the instance-pool example nginx will be installed by default.
-Nginx is used for testing the security list rules an the correct setup of the Load Balancer (instance-pool example).
+Nginx is used for testing the security list rules an the correct setup of the Load Balancer.
 
-On the k3s-cluster example, k3s will be automatically installed on all the machines.
+On the k3s-cluster example, k3s will be automatically installed on all the machines. **NOTE** k3s-cluster setup has moved to [this](https://github.com/garutilorenzo/k3s-oci-cluster) repository.
 
 ### OS
 

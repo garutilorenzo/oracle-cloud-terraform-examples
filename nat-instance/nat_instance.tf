@@ -1,4 +1,4 @@
-resource "oci_core_instance" "ubuntu_oci_instance" {
+resource "oci_core_instance" "nat_instance" {
   agent_config {
     is_management_disabled = "false"
     is_monitoring_disabled = "false"
@@ -29,11 +29,12 @@ resource "oci_core_instance" "ubuntu_oci_instance" {
 
   create_vnic_details {
     assign_private_dns_record = true
-    assign_public_ip          = var.is_private == true ? false : true
-    subnet_id                 = var.is_private == true ? var.private_subnet_id : var.public_subnet_id
+    assign_public_ip          = true
+    subnet_id                 = var.public_subnet_id
+    skip_source_dest_check    = true
   }
 
-  display_name = "Ubuntu Instance"
+  display_name = "NATINSTANCE"
 
   instance_options {
     are_legacy_imds_endpoints_disabled = false
@@ -43,7 +44,7 @@ resource "oci_core_instance" "ubuntu_oci_instance" {
 
   metadata = {
     "ssh_authorized_keys" = file(var.PATH_TO_PUBLIC_KEY)
-    "user_data"           = data.template_cloudinit_config.ubuntu_init.rendered
+    "user_data"           = data.template_cloudinit_config.nat_instance_init.rendered
   }
 
   shape = "VM.Standard.A1.Flex"

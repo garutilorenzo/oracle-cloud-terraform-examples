@@ -2,16 +2,13 @@ resource "oci_core_instance_configuration" "ubuntu_template" {
 
   compartment_id = var.compartment_ocid
   display_name   = "Ubuntu 20.04 instance config"
-  freeform_tags = {
-    "${var.tutorial_tag_key}" = "${var.tutorial_tag_value}"
-  }
+
   instance_details {
 
     instance_type = "compute"
 
     launch_details {
 
-      #Optional
       agent_config {
         is_management_disabled = "false"
         is_monitoring_disabled = "false"
@@ -36,8 +33,8 @@ resource "oci_core_instance_configuration" "ubuntu_template" {
       compartment_id      = var.compartment_ocid
 
       create_vnic_details {
-        assign_public_ip = true
-        subnet_id        = oci_core_subnet.default_oci_core_subnet10.id
+        assign_public_ip = var.is_private == true ? false : true
+        subnet_id        = var.is_private == true ? var.private_subnet_id : var.public_subnet_id
       }
 
       display_name = "Ubuntu Template"
@@ -58,4 +55,6 @@ resource "oci_core_instance_configuration" "ubuntu_template" {
       }
     }
   }
+
+  freeform_tags = local.tags
 }

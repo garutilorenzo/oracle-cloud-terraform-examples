@@ -11,13 +11,11 @@ resource "oci_core_instance_pool" "ubuntu_instance_pool" {
 
   placement_configurations {
     availability_domain = var.availability_domain
-    primary_subnet_id   = oci_core_subnet.default_oci_core_subnet10.id
+    primary_subnet_id   = var.is_private == true ? var.private_subnet_id : var.public_subnet_id
     fault_domains       = var.fault_domains
   }
 
   size = var.instance_pool_size
 
-  freeform_tags = {
-    "${var.tutorial_tag_key}" = "${var.tutorial_tag_value}"
-  }
+  freeform_tags = local.tags
 }

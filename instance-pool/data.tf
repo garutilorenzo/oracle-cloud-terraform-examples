@@ -4,7 +4,7 @@ data "template_cloudinit_config" "ubuntu_init" {
 
   part {
     content_type = "text/x-shellscript"
-    content      = templatefile("${path.module}/files/oci-ubuntu-install.sh", {})
+    content      = templatefile("${path.module}/files/oci-ubuntu-install.sh", { public_subnet_cidr = var.public_subnet_cidr })
   }
 }
 
