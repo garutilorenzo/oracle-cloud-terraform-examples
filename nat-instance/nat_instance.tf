@@ -44,7 +44,7 @@ resource "oci_core_instance" "nat_instance" {
 
   metadata = {
     "ssh_authorized_keys" = file(var.PATH_TO_PUBLIC_KEY)
-    "user_data"           = data.template_cloudinit_config.nat_instance_init.rendered
+    "user_data"           = data.cloudinit_config.nat_instance_init.rendered
   }
 
   shape = "VM.Standard.A1.Flex"
