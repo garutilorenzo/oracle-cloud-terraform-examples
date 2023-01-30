@@ -50,3 +50,8 @@ variable "instance_pool_size" {
   type    = number
   default = 2
 }
+
+variable "instance_pool_name" {
+  type    = string
+  default = "ubuntu-instance-pool"
+}

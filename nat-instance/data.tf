@@ -1,4 +1,4 @@
-data "template_cloudinit_config" "nat_instance_init" {
+data "cloudinit_config" "nat_instance_init" {
   gzip          = true
   base64_encode = true
 

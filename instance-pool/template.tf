@@ -41,7 +41,7 @@ resource "oci_core_instance_configuration" "ubuntu_template" {
 
       metadata = {
         "ssh_authorized_keys" = file(var.PATH_TO_PUBLIC_KEY)
-        "user_data"           = data.template_cloudinit_config.ubuntu_init.rendered
+        "user_data"           = data.cloudinit_config.ubuntu_init.rendered
       }
 
       shape = "VM.Standard.A1.Flex"

@@ -1,4 +1,4 @@
-data "template_cloudinit_config" "ubuntu_init" {
+data "cloudinit_config" "ubuntu_init" {
   gzip          = true
   base64_encode = true
 

@@ -5,7 +5,7 @@ resource "oci_core_instance_pool" "ubuntu_instance_pool" {
     ignore_changes        = [load_balancers, freeform_tags]
   }
 
-  display_name              = "ubuntu-instance-pool"
+  display_name              = var.instance_pool_name
   compartment_id            = var.compartment_ocid
   instance_configuration_id = oci_core_instance_configuration.ubuntu_template.id
 
