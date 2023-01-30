@@ -3,14 +3,18 @@ data "template_cloudinit_config" "nat_instance_init" {
   base64_encode = true
 
   part {
-    filename     = "init.cfg"
-    content_type = "text/cloud-config"
-    content      = templatefile("${path.module}/files/cloud-config-base.yaml", {})
+    content_type = "text/x-shellscript"
+    content      = templatefile("${path.module}/files/setup_nat.sh", {})
   }
 
   part {
     content_type = "text/x-shellscript"
-    content      = templatefile("${path.module}/files/setup_bastion.sh", { ssh_keys = local.ssh_keys, setup_bastion = var.setup_bastion, bastion_user = var.bastion_user, bastion_group = var.bastion_group })
+    content = templatefile("${path.module}/files/setup_bastion.sh", {
+      ssh_keys      = local.ssh_keys,
+      setup_bastion = var.setup_bastion,
+      bastion_user  = var.bastion_user,
+      bastion_group = var.bastion_group
+    })
   }
 }
 
