@@ -46,10 +46,10 @@ resource "oci_core_instance" "ubuntu_oci_instance" {
     "user_data"           = data.cloudinit_config.ubuntu_init.rendered
   }
 
-  shape = "VM.Standard.A1.Flex"
+  shape = var.shape
   shape_config {
-    memory_in_gbs = "6"
-    ocpus         = "1"
+    memory_in_gbs = var.memory_in_gbs
+    ocpus         = var.ocpus
   }
 
   source_details {
